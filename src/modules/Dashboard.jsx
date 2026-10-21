@@ -2,7 +2,7 @@ import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianG
 import { useStore } from '../store.jsx'
 import { Card, Kpi, Delta, Badge } from '../components/ui.jsx'
 import { useChartColors, ChartTip, axisProps } from '../components/charts.jsx'
-import { money, moneyShort, axisMoney, pct, dec1, monthLong, fdate } from '../lib/format.js'
+import { money, moneyShort, axisMoney, pct, dec1, monthLong, fdate, plural } from '../lib/format.js'
 
 export default function Dashboard({ metrics: m }) {
   const { setPage, db } = useStore()
@@ -16,12 +16,12 @@ export default function Dashboard({ metrics: m }) {
   const growth = m.prevSameDay ? m.cur.net / m.prevSameDay - 1 : 0
 
   const alerts = [
-    m.retained.length && { tone: 'bad', title: `${m.retained.length} facturas de proveedores retenidas`, body: 'No superaron el control de tres vías (orden de compra, recepción y factura).', page: 'compras' },
-    m.lowNoOrder.length && { tone: 'warn', title: m.lowNoOrder.length === 1 ? '1 artículo bajo punto de reposición sin pedido' : `${m.lowNoOrder.length} artículos bajo punto de reposición sin pedido`, body: m.lowNoOrder.slice(0, 3).map((i) => i.name).join(', ') + (m.lowNoOrder.length > 3 ? ' y otros.' : '.'), page: 'stock' },
-    m.outOfStock.length && { tone: 'bad', title: m.outOfStock.length === 1 ? '1 artículo sin stock' : `${m.outOfStock.length} artículos sin stock`, body: m.outOfStock.map((i) => i.name).join(', ') + '.', page: 'stock' },
+    m.retained.length && { tone: 'bad', title: `${plural(m.retained.length, 'factura de proveedor retenida', 'facturas de proveedores retenidas')}`, body: 'No superaron el control de tres vías (orden de compra, recepción y factura).', page: 'compras' },
+    m.lowNoOrder.length && { tone: 'warn', title: `${plural(m.lowNoOrder.length, 'artículo', 'artículos')} bajo punto de reposición sin pedido`, body: m.lowNoOrder.slice(0, 3).map((i) => i.name).join(', ') + (m.lowNoOrder.length > 3 ? ' y otros.' : '.'), page: 'stock' },
+    m.outOfStock.length && { tone: 'bad', title: `${plural(m.outOfStock.length, 'artículo', 'artículos')} sin stock`, body: m.outOfStock.map((i) => i.name).join(', ') + '.', page: 'stock' },
     m.overdue60 > 0 && { tone: 'warn', title: `${moneyShort(m.overdue60)} de deuda con más de 60 días de atraso`, body: `Representa el ${pct(m.morosidad)} de las cuentas a cobrar.`, page: 'clientes' },
-    m.due15.length && { tone: 'info', title: `${m.due15.length} facturas de proveedores vencen en 15 días`, body: `Total a pagar: ${moneyShort(m.due15.reduce((s, p) => s + p.invoice.total, 0))}.`, page: 'proveedores' },
-    m.chequesCartera.length && { tone: 'info', title: `${m.chequesCartera.length} cheques en cartera`, body: `Total: ${moneyShort(m.valores)}. Se depositan a su fecha de cobro.`, page: 'tesoreria' },
+    m.due15.length && { tone: 'info', title: `${plural(m.due15.length, 'factura de proveedor vence', 'facturas de proveedores vencen')} en 15 días`, body: `Total a pagar: ${moneyShort(m.due15.reduce((s, p) => s + p.invoice.total, 0))}.`, page: 'proveedores' },
+    m.chequesCartera.length && { tone: 'info', title: `${plural(m.chequesCartera.length, 'cheque', 'cheques')} en cartera`, body: `Total: ${moneyShort(m.valores)}. Se depositan a su fecha de cobro.`, page: 'tesoreria' },
   ].filter(Boolean)
 
   const agingData = Object.entries(m.aging).map(([k, v]) => ({ k, v }))

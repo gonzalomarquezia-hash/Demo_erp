@@ -5,7 +5,7 @@ import { Card, Kpi, Badge, Callout, StatusBadge } from '../components/ui.jsx'
 import { useChartColors, ChartTip, axisProps } from '../components/charts.jsx'
 import { depositCheque } from '../engine/engine.js'
 import { A } from '../engine/accounts.js'
-import { money, moneyShort, axisMoney, fdate, addDays, daysBetween } from '../lib/format.js'
+import { money, moneyShort, axisMoney, fdate, addDays, daysBetween, plural } from '../lib/format.js'
 
 function projectCash(db, m) {
   const weeks = Array.from({ length: 8 }, (_, w) => ({
@@ -82,7 +82,7 @@ export default function Treasury({ metrics: m }) {
       <div className="grid g-4">
         <Kpi label="Caja" value={money(m.caja)} foot={<span>Fondo fijo de mostrador</span>} />
         <Kpi label="Banco Provincia c/c" value={moneyShort(m.banco)} foot={<span>Saldo contable</span>} />
-        <Kpi label="Valores a depositar" value={moneyShort(m.valores)} foot={<span>{cheques.length} cheques en cartera</span>} />
+        <Kpi label="Valores a depositar" value={moneyShort(m.valores)} foot={<span>{plural(cheques.length, 'cheque', 'cheques')} en cartera</span>} />
         <Kpi label="Disponibilidades totales" value={moneyShort(m.disponibilidades)} />
       </div>
 

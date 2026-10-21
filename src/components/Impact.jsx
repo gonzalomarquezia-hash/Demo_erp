@@ -1,5 +1,5 @@
 import { accName } from '../engine/accounts.js'
-import { money, fdate, dec2, num } from '../lib/format.js'
+import { money, fdate, dec2, num, units } from '../lib/format.js'
 import { Badge } from './ui.jsx'
 
 // Asiento en formato de libro diario: primero las cuentas deudoras, luego "a" las acreedoras.
@@ -92,9 +92,9 @@ export function StockChangeTable({ changes, showReorder = true, showCost = false
           return (
             <tr key={ch.itemId}>
               <td>{ch.name}</td>
-              <td className="num">{num(ch.before)} {ch.unit}</td>
+              <td className="num">{units(ch.before, ch.unit)}</td>
               <td className={`num strong ${ch.after < ch.before ? 'bad' : 'good'}`}>{ch.after < ch.before ? '-' : '+'}{num(ch.qty)}</td>
-              <td className="num strong">{num(ch.after)} {ch.unit}</td>
+              <td className="num strong">{units(ch.after, ch.unit)}</td>
               {showCost && <td className="num">{money(ch.costBefore)} pasa a {money(ch.costAfter)}</td>}
               {showReorder && (
                 <td>{low ? <Badge tone="warn">Bajo punto de reposición: se sugiere compra</Badge> : <Badge tone="good">Stock suficiente</Badge>}</td>

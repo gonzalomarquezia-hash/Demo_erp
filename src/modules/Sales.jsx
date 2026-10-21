@@ -6,7 +6,7 @@ import { ImpactSteps, Entry, StockChangeTable, Compare, JournalHeader } from '..
 import { createSale, customerBalance, saleTotals, itemById } from '../engine/engine.js'
 import { computeMetrics } from '../engine/metrics.js'
 import { ivaLabel, COMPANY } from '../engine/catalog.js'
-import { money, moneyShort, fdate, pct, num, daysBetween } from '../lib/format.js'
+import { money, moneyShort, fdate, pct, num, daysBetween, units, unitLabel, plural } from '../lib/format.js'
 
 export function saleStatus(s, today) {
   if (s.condition === 'contado' || s.total - s.paid <= 0.5) return 'Cobrada'
@@ -68,7 +68,7 @@ export default function Sales({ metrics: m }) {
 
       <div className="grid g-4">
         <Kpi label="Facturas emitidas hoy" value={num(todaySales.length)} foot={<span>{moneyShort(todaySales.reduce((a, s) => a + s.net, 0))} netos</span>} />
-        <Kpi label="Ventas del mes" value={moneyShort(m.cur.net)} foot={<span>{num(m.cur.count)} comprobantes</span>} />
+        <Kpi label="Ventas del mes" value={moneyShort(m.cur.net)} foot={<span>{plural(m.cur.count, 'comprobante', 'comprobantes')}</span>} />
         <Kpi label="Ticket promedio" value={moneyShort(m.avgTicket)} info="Ventas netas del mes / cantidad de facturas." foot={<span>Mes en curso</span>} />
         <Kpi label="Ventas en cuenta corriente" value={pct(ctaShare)} info="Proporción de las ventas del mes otorgadas a crédito." foot={<span>El resto se cobra al contado</span>} />
       </div>
@@ -295,7 +295,7 @@ function NewSale({ onClose }) {
                 <optgroup key={r} label={r}>
                   {db.items.filter((i) => i.rubro === r).map((i) => (
                     <option key={i.id} value={i.id} disabled={i.stock <= 0}>
-                      {i.code} · {i.name} · {money(i.price)} por {i.unit} · stock {num(i.stock)}
+                      {i.code} · {i.name} · {money(i.price)} por {unitLabel(i.unit)} · stock {units(i.stock, i.unit)}
                     </option>
                   ))}
                 </optgroup>
@@ -317,7 +317,7 @@ function NewSale({ onClose }) {
                       <div>{l.item.name}</div>
                       <div className="small muted mono">{l.item.code}</div>
                     </td>
-                    <td className={`num ${l.qty > l.item.stock ? 'bad strong' : ''}`}>{num(l.item.stock)} {l.item.unit}</td>
+                    <td className={`num ${l.qty > l.item.stock ? 'bad strong' : ''}`}>{units(l.item.stock, l.item.unit)}</td>
                     <td className="num">
                       <input className="input" type="number" min="1" style={{ width: 100, textAlign: 'right' }} value={l.qty}
                         onChange={(e) => setLines(lines.map((x, j) => (j === i ? { ...x, qty: Number(e.target.value) } : x)))} />
@@ -389,7 +389,7 @@ export function SaleDetail({ saleId, onClose }) {
                   <tr key={l.itemId}>
                     <td className="mono">{it.code}</td>
                     <td>{it.name}</td>
-                    <td className="num">{num(l.qty)} {it.unit}</td>
+                    <td className="num">{units(l.qty, it.unit)}</td>
                     <td className="num">{money(l.price)}</td>
                     <td className="num">{money(l.qty * l.price)}</td>
                   </tr>
@@ -415,7 +415,7 @@ export function SaleDetail({ saleId, onClose }) {
             <div className="section-title" style={{ marginBottom: 8 }}>Cobranza</div>
             {s.condition === 'contado' && <p className="text-2">Cobrada al contado en el momento de la venta.</p>}
             {s.condition === 'ctacte' && receipts.length === 0 && (
-              <p className="text-2">Pendiente de cobro. {s.due < db.today ? `Vencida hace ${daysBetween(s.due, db.today)} días.` : `Vence el ${fdate(s.due)}.`}</p>
+              <p className="text-2">Pendiente de cobro. {s.due < db.today ? `Vencida hace ${plural(daysBetween(s.due, db.today), 'día', 'días')}.` : `Vence el ${fdate(s.due)}.`}</p>
             )}
             {receipts.length > 0 && <JournalHeader />}
             {receiptEntries.map((e) => <Entry key={e.id} entry={e} />)}

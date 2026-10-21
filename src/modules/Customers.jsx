@@ -5,7 +5,7 @@ import { Card, Drawer, Modal, Badge, Progress, usePaged, Kpi } from '../componen
 import { ImpactSteps, Entry, Compare, JournalHeader } from '../components/Impact.jsx'
 import { createReceipt, customerBalance, openInvoices } from '../engine/engine.js'
 import { ivaLabel } from '../engine/catalog.js'
-import { money, moneyShort, fdate, pct, daysBetween, addDays } from '../lib/format.js'
+import { money, moneyShort, fdate, pct, daysBetween, addDays, plural } from '../lib/format.js'
 
 function customerRows(db) {
   const byC = {}
@@ -46,9 +46,9 @@ export default function Customers({ metrics: m }) {
       </div>
 
       <div className="grid g-3">
-        <Kpi label="Total cuentas a cobrar" value={moneyShort(m.deudores)} info="Coincide con el saldo contable de Deudores por ventas." foot={<span>{rows.filter((r) => r.balance > 0).length} clientes con saldo</span>} />
+        <Kpi label="Total cuentas a cobrar" value={moneyShort(m.deudores)} info="Coincide con el saldo contable de Deudores por ventas." foot={<span>{plural(rows.filter((r) => r.balance > 0).length, 'cliente', 'clientes')} con saldo</span>} />
         <Kpi label="Días de cobro (DSO)" value={`${Math.round(m.dso)} días`} info="Cuentas a cobrar / (Ventas con IVA de los últimos 90 días / 90)." foot={<span>Plazo pactado habitual: 30 días</span>} />
-        <Kpi label="Cheques en cartera" value={moneyShort(m.valores)} foot={<span>{m.chequesCartera.length} cheques a depositar</span>} />
+        <Kpi label="Cheques en cartera" value={moneyShort(m.valores)} foot={<span>{plural(m.chequesCartera.length, 'cheque', 'cheques')} a depositar</span>} />
       </div>
 
       <Card title="Clientes en cuenta corriente" sub="Hacé clic en un cliente para ver su cuenta corriente y registrar cobros" flush>
@@ -75,7 +75,7 @@ export default function Customers({ metrics: m }) {
                     <td className="num strong">{money(r.balance)}</td>
                     <td><Progress value={use} color={use > 0.9 ? 'var(--bad)' : use > 0.7 ? 'var(--warn)' : 'var(--series-1)'} /></td>
                     <td className={`num ${r.overdue ? 'warn' : 'muted'}`}>{money(r.overdue)}</td>
-                    <td className="num">{r.oldest ? `${r.oldest} días` : '-'}</td>
+                    <td className="num">{r.oldest ? plural(r.oldest, 'día', 'días') : '-'}</td>
                     <td><Badge tone={st[0]}>{st[1]}</Badge></td>
                   </tr>
                 )
@@ -117,7 +117,7 @@ function CustomerDrawer({ customerId, onClose }) {
       <div className="grid g-3">
         <Kpi label="Saldo" value={money(balance)} />
         <Kpi label="Límite de crédito" value={money(c.limit)} foot={<span>Disponible {money(c.limit - balance)}</span>} />
-        <Kpi label="Plazo pactado" value={`${c.terms} días`} foot={<span>{open.length} facturas pendientes</span>} />
+        <Kpi label="Plazo pactado" value={`${c.terms} días`} foot={<span>{plural(open.length, 'factura pendiente', 'facturas pendientes')}</span>} />
       </div>
       <Card title="Cuenta corriente" sub="Últimos 30 movimientos" flush>
         <table className="t">

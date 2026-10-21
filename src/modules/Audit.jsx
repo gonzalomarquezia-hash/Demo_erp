@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useStore } from '../store.jsx'
 import { Card, Badge, usePaged } from '../components/ui.jsx'
 import { PERMISSIONS, ACTION_LABEL } from '../engine/catalog.js'
-import { fdate, num } from '../lib/format.js'
+import { fdate, num, plural } from '../lib/format.js'
 
 export default function Audit({ metrics: m }) {
   const { db } = useStore()
@@ -16,12 +16,12 @@ export default function Audit({ metrics: m }) {
   const unbalanced = db.journal.filter((e) => Math.abs(e.lines.reduce((s, l) => s + l.debit - l.credit, 0)) > 0.01).length
 
   const controls = [
-    { name: 'Separación de funciones', detail: 'Cada operación solo la puede ejecutar su sector', status: 'good', value: `${denied} intentos rechazados` },
-    { name: 'Control de tres vías', detail: 'Orden de compra, recepción y factura deben coincidir', status: m.retained.length ? 'warn' : 'good', value: `${m.retained.length} facturas retenidas` },
+    { name: 'Separación de funciones', detail: 'Cada operación solo la puede ejecutar su sector', status: 'good', value: `${plural(denied, 'intento rechazado', 'intentos rechazados')}` },
+    { name: 'Control de tres vías', detail: 'Orden de compra, recepción y factura deben coincidir', status: m.retained.length ? 'warn' : 'good', value: `${plural(m.retained.length, 'factura retenida', 'facturas retenidas')}` },
     { name: 'Límite de crédito', detail: 'No se factura en cuenta corriente por encima del límite', status: 'good', value: 'Activo' },
     { name: 'Control de stock', detail: 'No se factura mercadería sin existencia', status: 'good', value: 'Activo' },
     { name: 'Numeración correlativa', detail: 'Facturas, remitos, recibos, órdenes de compra y de pago', status: 'good', value: 'Sin saltos' },
-    { name: 'Partida doble', detail: 'Todo asiento automático debe balancear', status: unbalanced ? 'bad' : 'good', value: unbalanced ? `${unbalanced} con diferencia` : `${num(db.journal.length)} asientos verificados` },
+    { name: 'Partida doble', detail: 'Todo asiento automático debe balancear', status: unbalanced ? 'bad' : 'good', value: unbalanced ? `${num(unbalanced)} con diferencia` : `${num(db.journal.length)} asientos verificados` },
   ]
 
   return (

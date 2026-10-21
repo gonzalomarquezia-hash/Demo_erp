@@ -49,3 +49,10 @@ export function todayIso() {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
 }
 export const pad = (n, len) => String(n).padStart(len, '0')
+
+// Unidad de medida en singular o plural según la cantidad: "1 balde", "18 baldes", "1.200 unidades"
+const UNIT_PLURAL = { bolsa: 'bolsas', balde: 'baldes', millar: 'millares', unidad: 'unidades', barra: 'barras', metro: 'metros', rollo: 'rollos', lata: 'latas' }
+const UNIT_LABEL = { m3: 'm³', m2: 'm²' }
+export const unitLabel = (unit, qty = 1) => UNIT_LABEL[unit] || (Math.abs(qty) === 1 ? unit : UNIT_PLURAL[unit] || unit)
+export const units = (qty, unit) => `${num(qty)} ${unitLabel(unit, qty)}`
+export const plural = (n, one, many) => `${num(n)} ${n === 1 ? one : many}`

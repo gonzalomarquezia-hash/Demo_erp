@@ -6,7 +6,7 @@ import { ImpactSteps, Entry, StockChangeTable, JournalHeader, Compare } from '..
 import { FlowSteps } from './Sales.jsx'
 import { createPO, receivePO, registerInvoice, paySupplier, reorderSuggestion, threeWayMatch, itemById, saleTotals } from '../engine/engine.js'
 import { A } from '../engine/accounts.js'
-import { money, moneyShort, fdate, num } from '../lib/format.js'
+import { money, moneyShort, fdate, num, units } from '../lib/format.js'
 
 export const PURCHASE_FLOW = [
   { title: 'Orden de compra', who: 'Compras', doc: 'OC numerada', effect: 'Compromiso, sin asiento' },
@@ -210,7 +210,7 @@ function PODetail({ poId, onClose }) {
               <tbody>
                 {po.lines.map((l) => {
                   const it = itemById(db, l.itemId)
-                  return <tr key={l.itemId}><td>{it.name}</td><td className="num">{num(l.qty)} {it.unit}</td><td className="num">{money(l.price)}</td><td className="num">{money(l.qty * l.price)}</td></tr>
+                  return <tr key={l.itemId}><td>{it.name}</td><td className="num">{units(l.qty, it.unit)}</td><td className="num">{money(l.price)}</td><td className="num">{money(l.qty * l.price)}</td></tr>
                 })}
               </tbody>
               <tfoot><tr><td colSpan={3} className="num">Neto</td><td className="num">{money(po.net)}</td></tr></tfoot>

@@ -4,7 +4,7 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tool
 import { useStore } from '../store.jsx'
 import { Card, Kpi, Drawer, Badge, usePaged } from '../components/ui.jsx'
 import { useChartColors, ChartTip, axisProps } from '../components/charts.jsx'
-import { money, moneyShort, fdate, num, dec1 } from '../lib/format.js'
+import { money, moneyShort, fdate, num, dec1, units, unitLabel, plural } from '../lib/format.js'
 
 function itemStatus(i, onOrder) {
   if (i.stock <= 0) return ['bad', 'Sin stock']
@@ -25,7 +25,7 @@ export default function Stock({ metrics: m }) {
   return (
     <div className="page">
       <div className="grid g-5">
-        <Kpi label="Artículos activos" value={num(db.items.length)} foot={<span>{rubros.length} rubros</span>} />
+        <Kpi label="Artículos activos" value={num(db.items.length)} foot={<span>{plural(rubros.length, 'rubro', 'rubros')}</span>} />
         <Kpi label="Stock valorizado" value={moneyShort(m.stockValue)} info="Suma de existencias por su costo promedio ponderado." foot={<span>A costo promedio ponderado</span>} />
         <Kpi label="Rotación anual" value={`${dec1(m.rotation)} veces`} info="Costo de mercaderías vendidas de 12 meses / Stock valorizado actual." foot={<span>{Math.round(m.dio)} días de inventario</span>} />
         <Kpi label="Bajo punto de reposición" value={num(m.lowStock.length)} tone={m.lowNoOrder.length ? 'warn' : ''} foot={<span>{m.lowNoOrder.length} sin orden de compra</span>} />
@@ -59,7 +59,7 @@ export default function Stock({ metrics: m }) {
                     <td className="mono">{i.code}</td>
                     <td>{i.name}</td>
                     <td className="text-2 small">{i.rubro}</td>
-                    <td className="num strong">{num(i.stock)} <span className="muted small">{i.unit}</span></td>
+                    <td className="num strong">{num(i.stock)} <span className="muted small">{unitLabel(i.unit, i.stock)}</span></td>
                     <td className="num">{num(i.reorder)}</td>
                     <td className="num">{money(i.cost)}</td>
                     <td className="num">{money(i.price)}</td>
@@ -94,7 +94,7 @@ function Kardex({ itemId, onClose }) {
   return (
     <Drawer title={item.name} sub={`${item.code} · ${item.rubro} · Proveedor habitual: ${supplier.name}`} onClose={onClose}>
       <div className="grid g-3">
-        <Kpi label="Stock actual" value={`${num(item.stock)} ${item.unit}`} foot={<span>Máximo {num(item.max)}</span>} />
+        <Kpi label="Stock actual" value={units(item.stock, item.unit)} foot={<span>Máximo {num(item.max)}</span>} />
         <Kpi label="Punto de reposición" value={num(item.reorder)} info="Demanda diaria promedio x (días de entrega del proveedor + días de seguridad)." foot={<span>Entrega en {supplier.lead} días</span>} />
         <Kpi label="Costo promedio ponderado" value={money(item.cost)} foot={<span>Precio de lista {money(item.price)}</span>} />
       </div>
@@ -105,7 +105,7 @@ function Kardex({ itemId, onClose }) {
               <CartesianGrid vertical={false} stroke={c.grid} />
               <XAxis dataKey="date" {...axisProps(c)} tickFormatter={(v) => fdate(v).slice(0, 5)} minTickGap={40} />
               <YAxis {...axisProps(c)} axisLine={false} width={50} />
-              <Tooltip content={<ChartTip format={(v) => `${num(v)} ${item.unit}`} labelFormat={fdate} />} />
+              <Tooltip content={<ChartTip format={(v) => units(v, item.unit)} labelFormat={fdate} />} />
               <ReferenceLine y={item.reorder} stroke={c.warn} strokeDasharray="4 4" label={{ value: 'Punto de reposición', fill: c.text3, fontSize: 11, position: 'insideTopRight' }} />
               <Area type="stepAfter" dataKey="balance" name="Stock" stroke={c.series1} fill={c.series1} fillOpacity={0.12} strokeWidth={2} />
             </AreaChart>
