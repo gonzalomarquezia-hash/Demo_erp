@@ -103,26 +103,29 @@ export default function Purchases({ metrics: m }) {
   )
 }
 
+// El contenedor con scroll horizontal evita que la tabla se desborde sobre los elementos vecinos.
 function MatchTable({ db, match }) {
   return (
-    <table className="t" style={{ fontSize: '0.88em' }}>
-      <thead>
-        <tr><th>Artículo</th><th className="num">OC cantidad</th><th className="num">OC precio</th><th className="num">Recibido</th><th className="num">Facturado</th><th className="num">Precio facturado</th><th>Resultado</th></tr>
-      </thead>
-      <tbody>
-        {match.map((x) => (
-          <tr key={x.itemId}>
-            <td>{itemById(db, x.itemId).name}</td>
-            <td className="num">{num(x.ocQty)}</td>
-            <td className="num">{money(x.ocPrice)}</td>
-            <td className={`num ${x.recQty !== x.invQty ? 'bad strong' : ''}`}>{num(x.recQty)}</td>
-            <td className={`num ${x.recQty !== x.invQty ? 'bad strong' : ''}`}>{num(x.invQty)}</td>
-            <td className={`num ${Math.abs(x.invPrice - x.ocPrice) > x.ocPrice * 0.005 ? 'bad strong' : ''}`}>{money(x.invPrice)}</td>
-            <td><Badge tone={x.ok ? 'good' : 'bad'}>{x.reason}</Badge></td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="table-wrap">
+      <table className="t" style={{ fontSize: '0.88em' }}>
+        <thead>
+          <tr><th>Artículo</th><th className="num">OC cantidad</th><th className="num">OC precio</th><th className="num">Recibido</th><th className="num">Facturado</th><th className="num">Precio facturado</th><th>Resultado</th></tr>
+        </thead>
+        <tbody>
+          {match.map((x) => (
+            <tr key={x.itemId}>
+              <td>{itemById(db, x.itemId).name}</td>
+              <td className="num">{num(x.ocQty)}</td>
+              <td className="num">{money(x.ocPrice)}</td>
+              <td className={`num ${x.recQty !== x.invQty ? 'bad strong' : ''}`}>{num(x.recQty)}</td>
+              <td className={`num ${x.recQty !== x.invQty ? 'bad strong' : ''}`}>{num(x.invQty)}</td>
+              <td className={`num ${Math.abs(x.invPrice - x.ocPrice) > x.ocPrice * 0.005 ? 'bad strong' : ''}`}>{money(x.invPrice)}</td>
+              <td><Badge tone={x.ok ? 'good' : 'bad'}>{x.reason}</Badge></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
@@ -215,12 +218,6 @@ function PODetail({ poId, onClose }) {
               </tbody>
               <tfoot><tr><td colSpan={3} className="num">Neto</td><td className="num">{money(po.net)}</td></tr></tfoot>
             </table>
-            {po.invoice?.status === 'Conciliada' && (
-              <div style={{ marginTop: 12 }}>
-                <div className="section-title" style={{ marginBottom: 8 }}>Control de tres vías</div>
-                <MatchTable db={db} match={po.invoice.match} />
-              </div>
-            )}
           </div>
           <div>
             <div className="section-title" style={{ marginBottom: 8 }}>Asientos de la operación</div>
@@ -229,6 +226,13 @@ function PODetail({ poId, onClose }) {
             {entries.map((e) => <Entry key={e.id} entry={e} />)}
           </div>
         </div>
+
+        {po.invoice?.status === 'Conciliada' && (
+          <div>
+            <div className="section-title" style={{ marginBottom: 8 }}>Control de tres vías</div>
+            <MatchTable db={db} match={po.invoice.match} />
+          </div>
+        )}
       </div>
       {invoicing && <InvoiceForm po={po} supplier={supplier} onClose={() => setInvoicing(false)} onDone={(imp) => { setInvoicing(false); setImpact(imp) }} />}
     </Modal>

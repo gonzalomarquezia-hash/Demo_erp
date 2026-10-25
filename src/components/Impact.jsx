@@ -75,35 +75,37 @@ export function ImpactSteps({ steps }) {
 
 export function StockChangeTable({ changes, showReorder = true, showCost = false }) {
   return (
-    <table className="t" style={{ fontSize: '0.88em' }}>
-      <thead>
-        <tr>
-          <th>Artículo</th>
-          <th className="num">Stock anterior</th>
-          <th className="num">Movimiento</th>
-          <th className="num">Stock actual</th>
-          {showCost && <th className="num">Costo promedio</th>}
-          {showReorder && <th>Estado</th>}
-        </tr>
-      </thead>
-      <tbody>
-        {changes.map((ch) => {
-          const low = showReorder && ch.after <= ch.reorder
-          return (
-            <tr key={ch.itemId}>
-              <td>{ch.name}</td>
-              <td className="num">{units(ch.before, ch.unit)}</td>
-              <td className={`num strong ${ch.after < ch.before ? 'bad' : 'good'}`}>{ch.after < ch.before ? '-' : '+'}{num(ch.qty)}</td>
-              <td className="num strong">{units(ch.after, ch.unit)}</td>
-              {showCost && <td className="num">{money(ch.costBefore)} pasa a {money(ch.costAfter)}</td>}
-              {showReorder && (
-                <td>{low ? <Badge tone="warn">Bajo punto de reposición: se sugiere compra</Badge> : <Badge tone="good">Stock suficiente</Badge>}</td>
-              )}
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
+    <div className="table-wrap">
+      <table className="t" style={{ fontSize: '0.88em' }}>
+        <thead>
+          <tr>
+            <th>Artículo</th>
+            <th className="num">Stock anterior</th>
+            <th className="num">Movimiento</th>
+            <th className="num">Stock actual</th>
+            {showCost && <th className="num">Costo promedio</th>}
+            {showReorder && <th>Estado</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {changes.map((ch) => {
+            const low = showReorder && ch.after <= ch.reorder
+            return (
+              <tr key={ch.itemId}>
+                <td>{ch.name}</td>
+                <td className="num">{units(ch.before, ch.unit)}</td>
+                <td className={`num strong ${ch.after < ch.before ? 'bad' : 'good'}`}>{ch.after < ch.before ? '-' : '+'}{num(ch.qty)}</td>
+                <td className="num strong">{units(ch.after, ch.unit)}</td>
+                {showCost && <td className="num">{money(ch.costBefore)} pasa a {money(ch.costAfter)}</td>}
+                {showReorder && (
+                  <td>{low ? <Badge tone="warn">Bajo punto de reposición: se sugiere compra</Badge> : <Badge tone="good">Stock suficiente</Badge>}</td>
+                )}
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

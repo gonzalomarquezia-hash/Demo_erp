@@ -97,6 +97,7 @@ export default function About() {
           <div style={{ flex: 1, minWidth: 240 }}>
             <div className="section-title">Trabajo académico</div>
             <h3 style={{ margin: '4px 0 6px' }}>Fundación de Altos Estudios en Ciencias Comerciales</h3>
+            <p style={{ margin: '0 0 8px' }}><span className="muted">Alumno:</span> <strong>Gonzalo Marquez</strong></p>
             <p className="text-2">Sistema desarrollado como demostración del funcionamiento de un ERP: integración de procesos, control interno, sistema de información contable y control de gestión.</p>
           </div>
         </div>

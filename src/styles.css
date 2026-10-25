@@ -224,7 +224,8 @@ p { margin: 0; }
 .card-head .sub { font-size: 0.84em; color: var(--text-3); }
 .card-head .right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
 .card-body { padding: 14px 16px 16px; }
-.card-body.flush { padding: 10px 0 0; }
+/* Las tablas que no entran en su tarjeta se desplazan en horizontal en vez de montarse sobre lo que tienen al lado. */
+.card-body.flush { padding: 10px 0 0; overflow-x: auto; }
 
 .grid { display: grid; gap: 16px; }
 .g-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }

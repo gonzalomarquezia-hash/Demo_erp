@@ -43,11 +43,6 @@ export const TOUR_STEPS = [
     ),
   },
   {
-    page: 'tablero', target: 'theme', section: 'Visualización',
-    title: 'Modo proyector',
-    body: <p>Además del modo claro y el oscuro, el modo proyector usa fondo mate, letra más grande y colores de alto contraste para que se lea bien proyectado sobre un pizarrón.</p>,
-  },
-  {
     page: 'tablero', target: 'kpis', section: 'Tablero de control',
     title: 'Indicadores en tiempo real',
     body: (
