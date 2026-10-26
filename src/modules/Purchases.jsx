@@ -39,7 +39,7 @@ export default function Purchases({ metrics: m }) {
         <FlowSteps steps={PURCHASE_FLOW} plain />
       </Card>
 
-      <div className="grid g-4">
+      <div className="grid g-4" data-tour="po-kpis">
         <Kpi label="Órdenes de compra abiertas" value={num(open.length)} foot={<span>{moneyShort(open.reduce((a, p) => a + p.net, 0))} comprometidos</span>} />
         <Kpi label="Recibido sin facturar" value={moneyShort(-(db.bal[A.REC_PEND] || 0))} info="Saldo de la cuenta puente Recepciones pendientes de facturar: mercadería que ingresó y cuya factura todavía no se registró." foot={<span>Cuenta puente</span>} />
         <Kpi label="Compras del mes" value={moneyShort(monthPurch)} foot={<span>Órdenes emitidas, neto de IVA</span>} />
@@ -70,7 +70,7 @@ export default function Purchases({ metrics: m }) {
         </Card>
       )}
 
-      <Card title="Órdenes de compra" flush right={<button className="btn primary" onClick={() => setShowNew(true)}><Plus size={16} /> Nueva orden de compra</button>}>
+      <Card title="Órdenes de compra" flush tour="po-table" right={<button className="btn primary" data-tour="new-po" onClick={() => setShowNew(true)}><Plus size={16} /> Nueva orden de compra</button>}>
         <div className="toolbar">
           <select className="select" value={status} onChange={(e) => setStatus(e.target.value)}>
             {['todas', 'Emitida', 'Recibida', 'Facturada', 'Factura retenida', 'Pagada'].map((s) => <option key={s} value={s}>{s === 'todas' ? 'Todos los estados' : s}</option>)}
@@ -174,32 +174,32 @@ function PODetail({ poId, onClose }) {
   }))
 
   return (
-    <Modal size="wide" title={`${po.number} · ${supplier.name}`} sub={`Emitida el ${fdate(po.date)} por ${po.createdBy} · plazo de pago ${supplier.terms} días`} onClose={onClose}>
+    <Modal size="wide" tour="po-modal" title={`${po.number} · ${supplier.name}`} sub={`Emitida el ${fdate(po.date)} por ${po.createdBy} · plazo de pago ${supplier.terms} días`} onClose={onClose}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-        <FlowSteps steps={steps} done={fs.done} current={fs.current ?? -1} blocked={fs.blocked ?? -1} />
+        <div data-tour="po-steps"><FlowSteps steps={steps} done={fs.done} current={fs.current ?? -1} blocked={fs.blocked ?? -1} /></div>
 
         {po.status === 'Factura retenida' && (
-          <>
+          <div data-tour="po-retained-detail" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
             <Callout tone="bad" title="Factura retenida por el control de tres vías">
               {po.reception
                 ? 'La factura no coincide con la orden de compra o con lo recibido. No se registra la deuda ni se habilita el pago hasta que el proveedor emita la nota de crédito o la factura corregida.'
                 : 'El proveedor facturó mercadería que todavía no ingresó al depósito. Sin remito de recepción no se reconoce la deuda: evita pagar insumos que nunca llegaron.'}
             </Callout>
             <MatchTable db={db} match={po.invoice.match} />
-          </>
+          </div>
         )}
 
         <div className="btn-row">
-          {(po.status === 'Emitida' || (po.status === 'Factura retenida' && !po.reception)) && <button className="btn primary" onClick={doReceive}>Registrar recepción (Depósito)</button>}
+          {(po.status === 'Emitida' || (po.status === 'Factura retenida' && !po.reception)) && <button className="btn primary" data-tour="po-receive" onClick={doReceive}>Registrar recepción (Depósito)</button>}
           {(po.status === 'Recibida' || (po.status === 'Factura retenida' && po.reception)) && (
-            <button className="btn primary" onClick={() => setInvoicing(true)}>{po.status === 'Recibida' ? 'Registrar factura del proveedor (Contaduría)' : 'Registrar factura corregida (Contaduría)'}</button>
+            <button className="btn primary" data-tour="po-invoice" onClick={() => setInvoicing(true)}>{po.status === 'Recibida' ? 'Registrar factura del proveedor (Contaduría)' : 'Registrar factura corregida (Contaduría)'}</button>
           )}
-          {po.status === 'Facturada' && <button className="btn primary" onClick={doPay}>Emitir orden de pago (Tesorería)</button>}
+          {po.status === 'Facturada' && <button className="btn primary" data-tour="po-pay" onClick={doPay}>Emitir orden de pago (Tesorería)</button>}
           {po.status === 'Pagada' && <Badge tone="good">Circuito completo</Badge>}
         </div>
 
         {impact && (
-          <div>
+          <div data-tour="po-impact">
             <div className="section-title" style={{ marginBottom: 10 }}>{impact.title}: efectos en el sistema</div>
             <ImpactSteps steps={impact.steps} />
           </div>
@@ -265,8 +265,8 @@ function InvoiceForm({ po, supplier, onClose, onDone }) {
     })
 
   return (
-    <Modal size="wide" title="Registrar factura del proveedor" sub={`${supplier.name} · ${po.number}`} onClose={onClose}
-      foot={<><button className="btn" onClick={onClose}>Cancelar</button><button className="btn primary" onClick={confirm}>Registrar factura</button></>}
+    <Modal size="wide" tour="invoice-modal" title="Registrar factura del proveedor" sub={`${supplier.name} · ${po.number}`} onClose={onClose}
+      foot={<><button className="btn" onClick={onClose}>Cancelar</button><button className="btn primary" data-tour="invoice-confirm" onClick={confirm}>Registrar factura</button></>}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div className="field" style={{ maxWidth: 320 }}>
@@ -321,8 +321,8 @@ function NewPO({ onClose, onCreated }) {
     })
 
   return (
-    <Modal size="wide" title="Nueva orden de compra" sub="Las cantidades sugeridas surgen del punto de reposición y del stock máximo de cada artículo" onClose={onClose}
-      foot={<><button className="btn" onClick={() => setLines(reorderSuggestion(db, supplierId))} style={{ marginRight: 'auto' }}>Cargar sugerencia de reposición</button><button className="btn" onClick={onClose}>Cancelar</button><button className="btn primary" disabled={!lines.length || lines.some((l) => !(l.qty > 0))} onClick={confirm}>Emitir orden de compra</button></>}
+    <Modal size="wide" tour="po-new-modal" title="Nueva orden de compra" sub="Las cantidades sugeridas surgen del punto de reposición y del stock máximo de cada artículo" onClose={onClose}
+      foot={<><button className="btn" onClick={() => setLines(reorderSuggestion(db, supplierId))} style={{ marginRight: 'auto' }}>Cargar sugerencia de reposición</button><button className="btn" onClick={onClose}>Cancelar</button><button className="btn primary" data-tour="po-confirm" disabled={!lines.length || lines.some((l) => !(l.qty > 0))} onClick={confirm}>Emitir orden de compra</button></>}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div className="field" style={{ maxWidth: 440 }}>
@@ -354,7 +354,7 @@ function NewPO({ onClose, onCreated }) {
         </table>
         <div className="field" style={{ maxWidth: 440 }}>
           <label>Agregar artículo</label>
-          <select className="select" value="" onChange={(e) => {
+          <select className="select" data-tour="po-add-item" value="" onChange={(e) => {
             const it = itemById(db, e.target.value)
             if (it && !lines.some((l) => l.itemId === it.id)) setLines([...lines, { itemId: it.id, qty: Math.max(1, Math.ceil(it.max - it.stock)), price: Math.round(it.cost) }])
           }}>

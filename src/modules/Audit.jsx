@@ -58,7 +58,7 @@ export default function Audit({ metrics: m }) {
         </Card>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <Card title="Controles internos automáticos" flush>
+          <Card title="Controles internos automáticos" flush tour="audit-controls">
             <table className="t">
               <tbody>
                 {controls.map((c) => (
@@ -73,7 +73,7 @@ export default function Audit({ metrics: m }) {
               </tbody>
             </table>
           </Card>
-          <Card title="Matriz de permisos" sub="Qué sector puede ejecutar cada operación" flush>
+          <Card title="Matriz de permisos" sub="Qué sector puede ejecutar cada operación" flush tour="audit-perms">
             <table className="t">
               <tbody>
                 {Object.entries(PERMISSIONS).map(([k, v]) => (

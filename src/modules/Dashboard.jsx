@@ -38,6 +38,7 @@ export default function Dashboard({ metrics: m }) {
           foot={<Delta value={growth} suffix="vs. mismo período del mes anterior" />}
         />
         <Kpi
+          tour="kpi-cumplimiento"
           label="Cumplimiento del presupuesto"
           value={pct(compliance)}
           tone={compliance >= 1 ? 'good' : compliance >= 0.9 ? 'warn' : 'bad'}
@@ -75,6 +76,7 @@ export default function Dashboard({ metrics: m }) {
           foot={<span>Rotación {dec1(m.rotation)} veces al año · {dec1(m.dio)} días</span>}
         />
         <Kpi
+          tour="kpi-ccc"
           label="Ciclo de conversión de caja"
           value={`${Math.round(m.ccc)} días`}
           tone={m.ccc > 45 ? 'warn' : ''}
@@ -117,7 +119,7 @@ export default function Dashboard({ metrics: m }) {
       </div>
 
       <div className="grid g-3">
-        <Card title="Ventas por rubro" sub={`Mes en curso, neto de IVA`}>
+        <Card title="Ventas por rubro" sub={`Mes en curso, neto de IVA`} tour="chart-rubro">
           <div style={{ height: 300 }}>
             <ResponsiveContainer>
               <BarChart data={m.byRubro} layout="vertical" margin={{ top: 0, right: 16, left: 0, bottom: 0 }} barCategoryGap="24%">
@@ -131,7 +133,7 @@ export default function Dashboard({ metrics: m }) {
           </div>
         </Card>
 
-        <Card title="Antigüedad de cuentas a cobrar" sub="Saldo pendiente según días de atraso">
+        <Card title="Antigüedad de cuentas a cobrar" sub="Saldo pendiente según días de atraso" tour="chart-aging">
           <div style={{ height: 300 }}>
             <ResponsiveContainer>
               <BarChart data={agingData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barCategoryGap="20%">
@@ -147,7 +149,7 @@ export default function Dashboard({ metrics: m }) {
           </div>
         </Card>
 
-        <Card title="Principales clientes" sub="Últimos 90 días, neto de IVA" flush>
+        <Card title="Principales clientes" sub="Últimos 90 días, neto de IVA" flush tour="top-customers">
           <table className="t">
             <thead>
               <tr><th>Cliente</th><th className="num">Ventas</th></tr>
@@ -164,7 +166,7 @@ export default function Dashboard({ metrics: m }) {
         </Card>
       </div>
 
-      <Card title="Actividad reciente" sub="Últimas operaciones registradas en el sistema" flush right={<button className="btn sm" onClick={() => setPage('auditoria')}>Ver auditoría</button>}>
+      <Card title="Actividad reciente" sub="Últimas operaciones registradas en el sistema" flush tour="recent" right={<button className="btn sm" onClick={() => setPage('auditoria')}>Ver auditoría</button>}>
         <table className="t">
           <thead>
             <tr><th>Fecha</th><th>Hora</th><th>Usuario</th><th>Sector</th><th>Operación</th></tr>

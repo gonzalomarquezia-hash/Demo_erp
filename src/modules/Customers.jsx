@@ -45,13 +45,13 @@ export default function Customers({ metrics: m }) {
         ))}
       </div>
 
-      <div className="grid g-3">
+      <div className="grid g-3" data-tour="cust-kpis">
         <Kpi label="Total cuentas a cobrar" value={moneyShort(m.deudores)} info="Coincide con el saldo contable de Deudores por ventas." foot={<span>{plural(rows.filter((r) => r.balance > 0).length, 'cliente', 'clientes')} con saldo</span>} />
         <Kpi label="Días de cobro (DSO)" value={`${Math.round(m.dso)} días`} info="Cuentas a cobrar / (Ventas con IVA de los últimos 90 días / 90)." foot={<span>Plazo pactado habitual: 30 días</span>} />
         <Kpi label="Cheques en cartera" value={moneyShort(m.valores)} foot={<span>{plural(m.chequesCartera.length, 'cheque', 'cheques')} a depositar</span>} />
       </div>
 
-      <Card title="Clientes en cuenta corriente" sub="Hacé clic en un cliente para ver su cuenta corriente y registrar cobros" flush>
+      <Card title="Clientes en cuenta corriente" sub="Hacé clic en un cliente para ver su cuenta corriente y registrar cobros" flush tour="cust-table">
         <div className="toolbar">
           <div style={{ position: 'relative' }}>
             <Search size={15} style={{ position: 'absolute', left: 9, top: 10, color: 'var(--text-3)' }} />
@@ -111,15 +111,15 @@ function CustomerDrawer({ customerId, onClose }) {
   const open = openInvoices(db, customerId)
 
   return (
-    <Drawer title={c.name} sub={`${ivaLabel(c.iva)} · CUIT ${c.cuit} · Cliente desde ${c.since}`} onClose={onClose}
-      right={<button className="btn primary" disabled={balance <= 0.5} onClick={() => setCollect(true)}>Registrar cobro</button>}
+    <Drawer tour="cust-drawer" title={c.name} sub={`${ivaLabel(c.iva)} · CUIT ${c.cuit} · Cliente desde ${c.since}`} onClose={onClose}
+      right={<button className="btn primary" data-tour="cust-collect" disabled={balance <= 0.5} onClick={() => setCollect(true)}>Registrar cobro</button>}
     >
       <div className="grid g-3">
         <Kpi label="Saldo" value={money(balance)} />
         <Kpi label="Límite de crédito" value={money(c.limit)} foot={<span>Disponible {money(c.limit - balance)}</span>} />
         <Kpi label="Plazo pactado" value={`${c.terms} días`} foot={<span>{plural(open.length, 'factura pendiente', 'facturas pendientes')}</span>} />
       </div>
-      <Card title="Cuenta corriente" sub="Últimos 30 movimientos" flush>
+      <Card title="Cuenta corriente" sub="Últimos 30 movimientos" flush tour="cust-ledger">
         <table className="t">
           <thead><tr><th>Fecha</th><th>Comprobante</th><th className="num">Debe</th><th className="num">Haber</th><th className="num">Saldo</th></tr></thead>
           <tbody>

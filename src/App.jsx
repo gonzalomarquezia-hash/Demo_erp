@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  LayoutDashboard, Target, ShoppingCart, Users, Truck, Building2, Boxes, Landmark, BookOpen, Calculator, ShieldCheck, Info as InfoIcon, PlayCircle,
+  LayoutDashboard, Target, ShoppingCart, Users, Truck, Building2, Boxes, Landmark, BookOpen, Calculator, ShieldCheck, Info as InfoIcon, PlayCircle, HelpCircle,
 } from 'lucide-react'
 import { useStore } from './store.jsx'
 import { USERS, ACTION_LABEL } from './engine/catalog.js'
@@ -50,7 +50,7 @@ const ALL = NAV.flatMap((g) => g.items.map((i) => ({ ...i, group: g.group })))
 
 export default function App() {
   const { db, page, setPage, theme, setTheme, user, setUserId, toasts, guard, setGuard, switchToRole, reset, toast } = useStore()
-  const [tour, setTour] = useState(false)
+  const [tour, setTour] = useState(null) // null, 'guided' o 'explain'
   const [welcome, setWelcome] = useState(() => {
     try {
       return !sessionStorage.getItem('erp-welcome')
@@ -74,7 +74,7 @@ export default function App() {
       /* sin almacenamiento disponible */
     }
     setWelcome(false)
-    if (startTour) setTour(true)
+    if (startTour) setTour('guided')
   }
 
   return (
@@ -139,7 +139,7 @@ export default function App() {
               { id: 'proyector', label: 'Proyector', title: 'Alto contraste y letra grande para proyectar' },
             ]}
           />
-          <button className="btn primary" onClick={() => setTour(true)}>
+          <button className="btn primary" onClick={() => setTour('guided')}>
             <PlayCircle size={16} /> Recorrido guiado
           </button>
           <button className="btn ghost" onClick={() => setConfirmReset(true)}>Reiniciar demo</button>
@@ -150,7 +150,12 @@ export default function App() {
         </main>
       </div>
 
-      {tour && <Tour onClose={() => setTour(false)} />}
+      {!tour && !welcome && (
+        <button className="explain-fab" onClick={() => setTour('explain')} title="Explica cada parte de esta pantalla">
+          <HelpCircle size={17} /> Explicar pantalla
+        </button>
+      )}
+      {tour && <Tour key={`${tour}-${tour === 'explain' ? page : ''}`} mode={tour} onClose={() => setTour(null)} />}
 
       {welcome && (
         <Modal size="narrow" title="ERP demostrativo" sub="Sistema integrado de gestión para un corralón de materiales de construcción" onClose={() => closeWelcome(false)}
@@ -191,11 +196,11 @@ export default function App() {
       )}
 
       {guard && (
-        <Modal size="narrow" title="Operación no permitida para este usuario" sub="Control interno: separación de funciones" onClose={() => setGuard(null)}
+        <Modal size="narrow" tour="guard-modal" title="Operación no permitida para este usuario" sub="Control interno: separación de funciones" onClose={() => setGuard(null)}
           foot={
             <>
               <button className="btn" onClick={() => setGuard(null)}>Cancelar</button>
-              <button className="btn primary" onClick={() => {
+              <button className="btn primary" data-tour="guard-continue" onClick={() => {
                 const u = switchToRole(guard.allowed[0])
                 const retry = guard.retry
                 setGuard(null)

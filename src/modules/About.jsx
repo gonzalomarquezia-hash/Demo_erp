@@ -47,7 +47,7 @@ export default function About() {
   return (
     <div className="page">
       <div className="grid g-2-1">
-        <Card title="Qué es un ERP" sub="Enterprise Resource Planning: sistema de planificación de recursos empresariales">
+        <Card title="Qué es un ERP" sub="Enterprise Resource Planning: sistema de planificación de recursos empresariales" tour="about-erp">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }} className="text-2">
             <p>
               Un ERP reúne en un único sistema la información de todas las áreas de la empresa. Cada operación se registra una sola vez, en el lugar donde ocurre,
@@ -59,7 +59,7 @@ export default function About() {
           </div>
           <IntegrationDiagram />
         </Card>
-        <Card title="Empresa simulada">
+        <Card title="Empresa simulada" tour="about-company">
           <dl className="kv">
             <dt>Razón social</dt><dd>{COMPANY.name}</dd>
             <dt>Actividad</dt><dd>Corralón de materiales de construcción</dd>

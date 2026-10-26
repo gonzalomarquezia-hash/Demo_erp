@@ -79,25 +79,25 @@ export default function Scorecard({ metrics: m }) {
 
   return (
     <div className="page">
-      <Callout tone="info" title="Estrategia: crecer en el segmento de constructoras sin resignar liquidez">
+      <div data-tour="bsc-intro"><Callout tone="info" title="Estrategia: crecer en el segmento de constructoras sin resignar liquidez">
         El Cuadro de Mando Integral traduce la estrategia en objetivos medibles. Las perspectivas se encadenan: personal capacitado y datos registrados en origen
         mejoran los procesos; procesos confiables satisfacen a los clientes; clientes fieles y bien administrados generan resultados financieros.
-      </Callout>
+      </Callout></div>
       <Card flush tour="bsc">
         <div style={{ marginTop: -10 }}>
-          {P.map((p) => (
-            <div className="bsc-row" key={p.name}>
+          {P.map((p, pi) => (
+            <div className="bsc-row" key={p.name} data-tour={`bsc-row-${pi}`}>
               <div className="bsc-persp">
                 <div className="section-title">Perspectiva</div>
                 <h3>{p.name}</h3>
                 <div className="muted small">{p.question}</div>
               </div>
               <div className="bsc-kpis">
-                {p.kpis.map((k) => {
+                {p.kpis.map((k, ki) => {
                   const s = status(k)
                   const progress = k.higher ? k.value / k.target : k.target / Math.max(k.value, 0.0001)
                   return (
-                    <div className="bsc-kpi" key={k.name}>
+                    <div className="bsc-kpi" key={k.name} data-tour={pi === 0 && ki === 0 ? 'bsc-first' : undefined}>
                       <div className="small muted">Objetivo: {k.objective}</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                         <div className="strong">{k.name}</div>

@@ -66,14 +66,14 @@ export default function Sales({ metrics: m }) {
         <FlowSteps steps={SALES_FLOW} plain />
       </Card>
 
-      <div className="grid g-4">
+      <div className="grid g-4" data-tour="sales-kpis">
         <Kpi label="Facturas emitidas hoy" value={num(todaySales.length)} foot={<span>{moneyShort(todaySales.reduce((a, s) => a + s.net, 0))} netos</span>} />
         <Kpi label="Ventas del mes" value={moneyShort(m.cur.net)} foot={<span>{plural(m.cur.count, 'comprobante', 'comprobantes')}</span>} />
         <Kpi label="Ticket promedio" value={moneyShort(m.avgTicket)} info="Ventas netas del mes / cantidad de facturas." foot={<span>Mes en curso</span>} />
         <Kpi label="Ventas en cuenta corriente" value={pct(ctaShare)} info="Proporción de las ventas del mes otorgadas a crédito." foot={<span>El resto se cobra al contado</span>} />
       </div>
 
-      <Card title="Comprobantes de venta" flush right={
+      <Card title="Comprobantes de venta" flush tour="sales-table" right={
         <button className="btn primary" onClick={() => setShowNew(true)} data-tour="new-sale">
           <Plus size={16} /> Nueva venta
         </button>
@@ -227,7 +227,7 @@ function NewSale({ onClose }) {
       },
     ]
     return (
-      <Modal size="wide" title="Una operación, todos los módulos actualizados" sub={`${r.sale.number} · ${customer.name} · ${money(r.sale.total)}`} onClose={onClose}
+      <Modal size="wide" tour="sale-result" title="Una operación, todos los módulos actualizados" sub={`${r.sale.number} · ${customer.name} · ${money(r.sale.total)}`} onClose={onClose}
         foot={
           <>
             <button className="btn" onClick={() => { onClose(); setPage('contabilidad') }}>Ver libro diario</button>
@@ -242,12 +242,12 @@ function NewSale({ onClose }) {
   }
 
   return (
-    <Modal size="wide" title="Nueva venta" sub="Factura con remito de entrega" onClose={onClose}
+    <Modal size="wide" tour="sale-modal" title="Nueva venta" sub="Factura con remito de entrega" onClose={onClose}
       foot={
         <>
-          <button className="btn" onClick={example} style={{ marginRight: 'auto' }}>Cargar ejemplo</button>
+          <button className="btn" data-tour="sale-example" onClick={example} style={{ marginRight: 'auto' }}>Cargar ejemplo</button>
           <button className="btn" onClick={onClose}>Cancelar</button>
-          <button className="btn primary" disabled={invalid} onClick={confirm}>Confirmar y emitir factura</button>
+          <button className="btn primary" data-tour="sale-confirm" disabled={invalid} onClick={confirm}>Confirmar y emitir factura</button>
         </>
       }
     >
@@ -255,7 +255,7 @@ function NewSale({ onClose }) {
         <div className="grid" style={{ gridTemplateColumns: '2fr 1fr 1fr' }}>
           <div className="field">
             <label>Cliente</label>
-            <select className="select" value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
+            <select className="select" data-tour="sale-customer" value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
               {db.customers.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>

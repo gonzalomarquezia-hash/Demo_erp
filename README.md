@@ -19,7 +19,11 @@ Funciona en el navegador, sin base de datos: al abrirse simula un año completo 
 
 ## Presentación
 
-- **Recorrido guiado**: botón en la barra superior. Se avanza con `Espacio`, `Enter` o `Av Pág` (compatible con punteros de presentación), se retrocede con `Re Pág` y se cierra con `Esc`.
+- **Recorrido guiado**: botón en la barra superior. Se elige qué ver, **una venta** o **una compra**, y el sistema hace la operación en vivo:
+  - *Venta* (6 pasos): se carga, se emite la factura y se ve cómo se actualizan stock, cuenta corriente, contabilidad y tablero.
+  - *Compra* (7 pasos): arranca con un usuario de otro sector para mostrar el control de separación de funciones, cambia de usuario y recorre orden de compra, recepción, factura con control de tres vías y pago.
+- **Explicar pantalla**: botón flotante abajo a la derecha. Explica cada componente del módulo en el que se está (gráficos, indicadores, tablas) y, en algunos, lo muestra en vivo, como el efecto de los plazos en el presupuesto.
+- Teclas: se avanza con `Espacio`, `Enter` o `Av Pág` (compatible con punteros de presentación), se retrocede con `Re Pág` y se cierra con `Esc`. En la elección inicial, `C` abre la compra.
 - **Modo proyector**: fondo oscuro mate, letra más grande y colores de alto contraste.
 
 ## Uso local

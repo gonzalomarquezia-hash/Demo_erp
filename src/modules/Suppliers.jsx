@@ -25,12 +25,12 @@ export default function Suppliers({ metrics: m }) {
 
   return (
     <div className="page">
-      <div className="grid g-4">
+      <div className="grid g-4" data-tour="sup-kpis">
         {Object.entries(buckets).map(([k, v]) => (
           <Kpi key={k} label={`A pagar: ${k.toLowerCase()}`} value={moneyShort(v)} tone={k === 'Vencido' && v > 0 ? 'bad' : ''} />
         ))}
       </div>
-      <Card title="Proveedores" sub="Saldo de facturas conciliadas pendientes de pago" flush right={<span className="small muted">Total cuentas a pagar {money(m.proveedores)} · {Math.round(m.dpo)} días de pago</span>}>
+      <Card title="Proveedores" sub="Saldo de facturas conciliadas pendientes de pago" flush tour="sup-table" right={<span className="small muted">Total cuentas a pagar {money(m.proveedores)} · {Math.round(m.dpo)} días de pago</span>}>
         <table className="t">
           <thead><tr><th>Proveedor</th><th>Rubro</th><th className="num">Plazo</th><th className="num">Compras 12 meses</th><th className="num">Facturas pendientes</th><th className="num">Saldo</th><th>Próximo vencimiento</th><th>Observaciones</th></tr></thead>
           <tbody>
@@ -73,9 +73,9 @@ function SupplierDrawer({ supplierId, onClose }) {
     })
 
   return (
-    <Drawer title={s.name} sub={`CUIT ${s.cuit} · ${s.rubro} · Plazo de pago ${s.terms} días · Entrega en ${s.lead} días`} onClose={onClose}>
+    <Drawer tour="sup-drawer" title={s.name} sub={`CUIT ${s.cuit} · ${s.rubro} · Plazo de pago ${s.terms} días · Entrega en ${s.lead} días`} onClose={onClose}>
       {impact && <ImpactSteps steps={impact} />}
-      <Card title="Facturas pendientes de pago" flush>
+      <Card title="Facturas pendientes de pago" flush tour="sup-pending">
         <table className="t">
           <thead><tr><th>Factura</th><th>Fecha</th><th>Vencimiento</th><th className="num">Total</th><th /></tr></thead>
           <tbody>

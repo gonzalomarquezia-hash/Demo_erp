@@ -79,7 +79,7 @@ export default function Treasury({ metrics: m }) {
 
   return (
     <div className="page">
-      <div className="grid g-4">
+      <div className="grid g-4" data-tour="treas-kpis">
         <Kpi label="Caja" value={money(m.caja)} foot={<span>Fondo fijo de mostrador</span>} />
         <Kpi label="Banco Provincia c/c" value={moneyShort(m.banco)} foot={<span>Saldo contable</span>} />
         <Kpi label="Valores a depositar" value={moneyShort(m.valores)} foot={<span>{plural(cheques.length, 'cheque', 'cheques')} en cartera</span>} />
@@ -101,7 +101,7 @@ export default function Treasury({ metrics: m }) {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="table-wrap" style={{ marginTop: 10 }}>
+        <div className="table-wrap" style={{ marginTop: 10 }} data-tour="cashflow-table">
           <table className="t" style={{ fontSize: '0.86em' }}>
             <thead><tr><th>Concepto</th>{proj.map((w) => <th key={w.w} className="num">{w.label}<div className="muted" style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 500 }}>{w.range}</div></th>)}</tr></thead>
             <tbody>
@@ -115,7 +115,7 @@ export default function Treasury({ metrics: m }) {
             <tfoot><tr><td>Saldo final proyectado</td>{proj.map((w) => <td key={w.w} className={`num ${w.final < 0 ? 'bad' : ''}`}>{axisMoney(w.final)}</td>)}</tr></tfoot>
           </table>
         </div>
-        <div style={{ marginTop: 12 }}>
+        <div style={{ marginTop: 12 }} data-tour="cashflow-callout">
           {minWeek.final < 0 ? (
             <Callout tone="bad" title={`Faltante de fondos proyectado en la ${minWeek.label.toLowerCase()}`}>Saldo mínimo de {money(minWeek.final)}. Conviene acelerar cobranzas, negociar plazos con proveedores o gestionar un descubierto con anticipación.</Callout>
           ) : (
@@ -125,7 +125,7 @@ export default function Treasury({ metrics: m }) {
       </Card>
 
       <div className="grid g-2">
-        <Card title="Cheques en cartera" sub="Se depositan en la fecha de cobro" flush>
+        <Card title="Cheques en cartera" sub="Se depositan en la fecha de cobro" flush tour="treas-cheques">
           <table className="t">
             <thead><tr><th>Banco</th><th>Número</th><th>Librador</th><th>Fecha de cobro</th><th className="num">Importe</th><th /></tr></thead>
             <tbody>
@@ -142,7 +142,7 @@ export default function Treasury({ metrics: m }) {
             </tbody>
           </table>
         </Card>
-        <Card title="Últimos movimientos bancarios" flush>
+        <Card title="Últimos movimientos bancarios" flush tour="treas-bank">
           <table className="t">
             <thead><tr><th>Fecha</th><th>Concepto</th><th className="num">Importe</th></tr></thead>
             <tbody>

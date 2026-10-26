@@ -52,7 +52,7 @@ function Journal() {
 
   return (
     <>
-      <div className="grid g-3">
+      <div className="grid g-3" data-tour="acc-kpis">
         <Kpi label="Asientos registrados" value={num(db.journal.length)} foot={<span>Todos generados automáticamente por las operaciones</span>} />
         <Kpi label="Total Debe" value={money(totals.d)} />
         <Kpi label="Total Haber" value={money(totals.c)} foot={Math.abs(totals.d - totals.c) < 1 ? <Badge tone="good">Partida doble verificada</Badge> : <Badge tone="bad">Diferencia</Badge>} />
@@ -97,7 +97,7 @@ function Ledger() {
   const last = lines[lines.length - 1]
   const a = ACCOUNTS.find((x) => x.code === acc)
   return (
-    <Card title={`Mayor de ${a.code} ${a.name}`} sub={`${a.group} · ${num(lines.length)} movimientos · se muestran los últimos 60`} flush
+    <Card tour="acc-ledger" title={`Mayor de ${a.code} ${a.name}`} sub={`${a.group} · ${num(lines.length)} movimientos · se muestran los últimos 60`} flush
       right={<select className="select" value={acc} onChange={(e) => setAcc(e.target.value)}>{ACCOUNTS.map((x) => <option key={x.code} value={x.code}>{x.code} {x.name}</option>)}</select>}
     >
       <div style={{ padding: '0 16px 12px' }} className="text-2">
@@ -131,7 +131,7 @@ function TrialBalance() {
   })
   const t = rows.reduce((x, r) => ({ debit: x.debit + r.debit, credit: x.credit + r.credit, deudor: x.deudor + r.deudor, acreedor: x.acreedor + r.acreedor }), { debit: 0, credit: 0, deudor: 0, acreedor: 0 })
   return (
-    <Card title="Balance de sumas y saldos" sub="Ejercicio en curso, a la fecha del sistema" flush right={Math.abs(t.deudor - t.acreedor) < 1 ? <Badge tone="good">Saldos deudores = saldos acreedores</Badge> : <Badge tone="bad">No balancea</Badge>}>
+    <Card tour="acc-trial" title="Balance de sumas y saldos" sub="Ejercicio en curso, a la fecha del sistema" flush right={Math.abs(t.deudor - t.acreedor) < 1 ? <Badge tone="good">Saldos deudores = saldos acreedores</Badge> : <Badge tone="bad">No balancea</Badge>}>
       <table className="t">
         <thead><tr><th>Código</th><th>Cuenta</th><th>Rubro</th><th className="num">Sumas Debe</th><th className="num">Sumas Haber</th><th className="num">Saldo deudor</th><th className="num">Saldo acreedor</th></tr></thead>
         <tbody>
@@ -184,7 +184,7 @@ function Statements() {
 
   return (
     <div className="grid g-2">
-      <Card title="Estado de resultados" sub={period === 'ejercicio' ? 'Ejercicio en curso' : monthLong(period)} flush
+      <Card tour="acc-results" title="Estado de resultados" sub={period === 'ejercicio' ? 'Ejercicio en curso' : monthLong(period)} flush
         right={<select className="select" value={period} onChange={(e) => setPeriod(e.target.value)}><option value="ejercicio">Ejercicio completo</option>{months.map((k) => <option key={k} value={k}>{monthLong(k)}{k === cur ? ' (en curso)' : ''}</option>)}</select>}
       >
         <table className="t">
@@ -198,7 +198,7 @@ function Statements() {
           <tfoot><tr><td>Resultado del período</td><td className={`num ${resultado < 0 ? 'bad' : 'good'}`}>{money(resultado)}</td></tr></tfoot>
         </table>
       </Card>
-      <Card title="Estado de situación patrimonial" sub={`Al ${fdate(db.today)}`} flush right={Math.abs(activo - pasivo - patrimonio) < 1 ? <Badge tone="good">Activo = Pasivo + PN</Badge> : <Badge tone="bad">Diferencia</Badge>}>
+      <Card tour="acc-balance" title="Estado de situación patrimonial" sub={`Al ${fdate(db.today)}`} flush right={Math.abs(activo - pasivo - patrimonio) < 1 ? <Badge tone="good">Activo = Pasivo + PN</Badge> : <Badge tone="bad">Diferencia</Badge>}>
         <table className="t">
           <tbody>
             <tr><td className="section-title" colSpan={2}>Activo corriente</td></tr>
@@ -223,7 +223,7 @@ function Statements() {
 
 function Chart() {
   return (
-    <Card title="Plan de cuentas" sub="Estructura codificada utilizada por los asientos automáticos" flush>
+    <Card tour="acc-chart" title="Plan de cuentas" sub="Estructura codificada utilizada por los asientos automáticos" flush>
       <table className="t">
         <thead><tr><th>Código</th><th>Cuenta</th><th>Rubro</th><th>Saldo habitual</th></tr></thead>
         <tbody>

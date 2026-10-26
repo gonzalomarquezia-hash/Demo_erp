@@ -121,12 +121,12 @@ export function Modal({ title, sub, onClose, children, foot, size = '', tour }) 
   )
 }
 
-export function Drawer({ title, sub, right, onClose, children }) {
+export function Drawer({ title, sub, right, onClose, children, tour }) {
   useEscape(onClose)
   return createPortal(
     <>
       <div className="drawer-scrim" onClick={onClose} />
-      <aside className="drawer" role="dialog" aria-modal="true">
+      <aside className="drawer" role="dialog" aria-modal="true" data-tour={tour}>
         <div className="drawer-head">
           <div style={{ minWidth: 0 }}>
             <h2 style={{ fontSize: '1.15em' }}>{title}</h2>
@@ -150,7 +150,7 @@ export function Tabs({ tabs, value, onChange, tour }) {
   return (
     <div className="tabs" data-tour={tour}>
       {tabs.map((t) => (
-        <button key={t.id} className={`tab ${value === t.id ? 'on' : ''}`} onClick={() => onChange(t.id)}>
+        <button key={t.id} data-tab={t.id} className={`tab ${value === t.id ? 'on' : ''}`} onClick={() => onChange(t.id)}>
           {t.label}
         </button>
       ))}

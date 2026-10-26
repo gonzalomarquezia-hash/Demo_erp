@@ -24,7 +24,7 @@ export default function Stock({ metrics: m }) {
 
   return (
     <div className="page">
-      <div className="grid g-5">
+      <div className="grid g-5" data-tour="stock-kpis">
         <Kpi label="Artículos activos" value={num(db.items.length)} foot={<span>{plural(rubros.length, 'rubro', 'rubros')}</span>} />
         <Kpi label="Stock valorizado" value={moneyShort(m.stockValue)} info="Suma de existencias por su costo promedio ponderado." foot={<span>A costo promedio ponderado</span>} />
         <Kpi label="Rotación anual" value={`${dec1(m.rotation)} veces`} info="Costo de mercaderías vendidas de 12 meses / Stock valorizado actual." foot={<span>{Math.round(m.dio)} días de inventario</span>} />
@@ -92,13 +92,13 @@ function Kardex({ itemId, onClose }) {
   const last = moves.slice(-40).reverse()
 
   return (
-    <Drawer title={item.name} sub={`${item.code} · ${item.rubro} · Proveedor habitual: ${supplier.name}`} onClose={onClose}>
+    <Drawer tour="kardex" title={item.name} sub={`${item.code} · ${item.rubro} · Proveedor habitual: ${supplier.name}`} onClose={onClose}>
       <div className="grid g-3">
         <Kpi label="Stock actual" value={units(item.stock, item.unit)} foot={<span>Máximo {num(item.max)}</span>} />
         <Kpi label="Punto de reposición" value={num(item.reorder)} info="Demanda diaria promedio x (días de entrega del proveedor + días de seguridad)." foot={<span>Entrega en {supplier.lead} días</span>} />
         <Kpi label="Costo promedio ponderado" value={money(item.cost)} foot={<span>Precio de lista {money(item.price)}</span>} />
       </div>
-      <Card title="Evolución del stock" sub="Saldo al cierre de cada día con movimientos">
+      <Card title="Evolución del stock" sub="Saldo al cierre de cada día con movimientos" tour="kardex-chart">
         <div style={{ height: 200 }}>
           <ResponsiveContainer>
             <AreaChart data={series} margin={{ top: 6, right: 8, left: 0, bottom: 0 }}>
@@ -112,7 +112,7 @@ function Kardex({ itemId, onClose }) {
           </ResponsiveContainer>
         </div>
       </Card>
-      <Card title="Ficha de stock (kardex)" sub="Últimos 40 movimientos" flush>
+      <Card title="Ficha de stock (kardex)" sub="Últimos 40 movimientos" flush tour="kardex-table">
         <table className="t">
           <thead><tr><th>Fecha</th><th>Tipo</th><th>Comprobante</th><th className="num">Entrada</th><th className="num">Salida</th><th className="num">Saldo</th><th className="num">Costo unitario</th></tr></thead>
           <tbody>

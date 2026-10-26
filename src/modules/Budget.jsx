@@ -95,13 +95,13 @@ export default function Budget({ metrics: m }) {
 
   return (
     <div className="page">
-      <Callout tone="info" title="Presupuesto económico y presupuesto financiero">
+      <div data-tour="bud-intro"><Callout tone="info" title="Presupuesto económico y presupuesto financiero">
         El presupuesto económico registra ingresos y gastos cuando se devengan (al vender o comprar). El financiero los registra cuando se cobran o se pagan.
         La diferencia entre ambos está en los créditos a clientes y las deudas con proveedores, que se reflejan en el balance proyectado.
-      </Callout>
+      </Callout></div>
 
       <div className="grid g-1-2" data-tour="budget-sim">
-        <Card title="Supuestos" sub={`Ventas base: ${moneyShort(base0)} mensuales · gastos fijos ${moneyShort(fixed0)} · neto de IVA`}>
+        <Card tour="bud-assumptions" title="Supuestos" sub={`Ventas base: ${moneyShort(base0)} mensuales · gastos fijos ${moneyShort(fixed0)} · neto de IVA`}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="btn-row">
               {presets.map((pr) => (
@@ -116,7 +116,7 @@ export default function Budget({ metrics: m }) {
           </div>
         </Card>
 
-        <Card title="Resultado acumulado y saldo de caja" sub="Próximos 12 meses"
+        <Card tour="bud-chart" title="Resultado acumulado y saldo de caja" sub="Próximos 12 meses"
           right={<div className="legend"><span><i style={{ background: c.series1 }} />Resultado económico acumulado</span><span><i style={{ background: c.series3 }} />Saldo de caja</span></div>}
         >
           <div style={{ height: 300 }}>
@@ -145,7 +145,7 @@ export default function Budget({ metrics: m }) {
         </Card>
       </div>
 
-      <Card title="Presupuesto económico y financiero mensual" sub="Montos netos de IVA" flush>
+      <Card title="Presupuesto económico y financiero mensual" sub="Montos netos de IVA" flush tour="bud-table">
         <div className="table-wrap">
           <table className="t" style={{ fontSize: '0.86em' }}>
             <thead><tr><th>Concepto</th>{rows.map((r) => <th key={r.i} className="num">{r.label}</th>)}</tr></thead>
@@ -166,7 +166,7 @@ export default function Budget({ metrics: m }) {
         </div>
       </Card>
 
-      <Card title={`Balance proyectado al cierre de ${rows[rows.length - 1].label}`} sub="Vincula ambos presupuestos: la caja sale del financiero y el resultado del económico"
+      <Card tour="bud-balance" title={`Balance proyectado al cierre de ${rows[rows.length - 1].label}`} sub="Vincula ambos presupuestos: la caja sale del financiero y el resultado del económico"
         right={Math.abs(totalAct - totalPas) < 1 ? <Badge tone="good">Activo = Pasivo + PN</Badge> : <Badge tone="bad">No balancea</Badge>}
       >
         <div className="grid g-2">

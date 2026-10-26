@@ -59,7 +59,7 @@ export function ImpactSteps({ steps }) {
             <div className="impact-dot">{i + 1}</div>
             {i < steps.length - 1 && <div className="impact-line" />}
           </div>
-          <div className="impact-card">
+          <div className="impact-card" data-tour={`impact-${i}`}>
             <div className="ic-head">
               <span className="mod">{s.module}</span>
               <h4>{s.title}</h4>
